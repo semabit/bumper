@@ -33,7 +33,7 @@
     "lodash.set": "^4.3.2",
     "mock-fs": "^4.10.0",
     "release-it": "^12.2.2",
-    "yaml": "^1.6.0"
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "auto-changelog": "^1.16.1",
