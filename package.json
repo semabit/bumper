@@ -47,10 +47,8 @@
     "node": ">=8"
   },
   "release-it": {
-    "scripts": {
-      "beforeStart": "npm test"
-    },
     "hooks": {
+      "before:init": "npm test",
       "after:bump": "auto-changelog --ignore-commit-pattern \"Release \" --sort-commits date --latest-version v${version}"
     },
     "git": {
