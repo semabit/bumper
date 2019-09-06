@@ -6,6 +6,7 @@ const castArray = require('lodash.castarray');
 const detectIndent = require('detect-indent');
 const {Plugin} = require('release-it');
 const YAML = require('yamljs');
+const xml2js = require('xml2js');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -33,6 +34,9 @@ class Bumper extends Plugin {
             } else if (type === 'application/x-yaml') {
                 const parsed = YAML.parse(data.toString());
                 version = get(parsed, path);
+            } else if (type === 'application/xml') {
+                const parsed = await xml2js.parseStringPromise(data.toString());
+                version = get(parsed, path);
             }
         }
 
@@ -55,10 +59,34 @@ class Bumper extends Plugin {
                     return writeFile(file, version);
                 } else if (type === 'application/x-yaml') {
                     const data = await readFile(file, 'utf8').catch(() => '{}') || '{}';
-                    const indent = detectIndent(data).amount || 4;
+                    const indent = detectIndent(data).amount || 2;
                     const parsed = YAML.parse(data);
                     set(parsed, path, version);
                     return writeFile(file, YAML.stringify(parsed, null, indent));
+                } else if (type === 'application/xml') {
+                    const data = await readFile(file, 'utf8').catch(() => '') || '';
+                    let parsed = {};
+                    let indent = '  ';
+                    let xml = '';
+
+                    if (data) {
+                        indent = detectIndent(data).indent || indent;
+                        parsed = await xml2js.parseStringPromise(data);
+                    }
+
+                    set(parsed, path, version);
+                    const builder = new xml2js.Builder({
+                        renderOpts: {pretty: true, indent, newline: '\n'},
+                        xmldec: {version: '1.0', encoding: 'utf-8'}
+                    });
+
+                    try {
+                        xml = builder.buildObject(parsed); // fails first time?
+                    } catch (e) {
+                        xml = builder.buildObject(parsed);
+                    }
+
+                    return await writeFile(file, xml);
                 }
             })
         );

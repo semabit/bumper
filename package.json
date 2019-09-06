@@ -33,6 +33,7 @@
     "lodash.set": "^4.3.2",
     "mock-fs": "^4.10.0",
     "release-it": "^12.2.2",
+    "xml2js": "^0.4.22",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
