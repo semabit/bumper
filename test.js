@@ -56,9 +56,6 @@ test('should write indented JSON file', async t => {
 });
 
 test('should write indented YAML file', async t => {
-    // DKTODO: should be 10 indent
-    console.debug(readFile('./app.yml'));
-
     const options = {
         [namespace]: {
             out: [{
@@ -70,7 +67,6 @@ test('should write indented YAML file', async t => {
     };
     const plugin = factory(Plugin, {namespace, options});
     await plugin.bump('2.4.5');
-    console.debug(readFile('./app.yml'));
     t.is(readFile('./app.yml'), `content:${EOL}          app.version: 2.4.5`);
 });
 
