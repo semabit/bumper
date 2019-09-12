@@ -1,6 +1,6 @@
 {
   "name": "@semabit/release-it-bumper",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Version read/write plugin for release-it",
   "main": "index.js",
   "scripts": {
