@@ -6,7 +6,7 @@
   "scripts": {
     "test": "ava test.js --verbose",
     "release": "release-it",
-    "changelog": "auto-changelog --ignore-commit-pattern \"Release \" --sort-commits date"
+    "changelog": "auto-changelog"
   },
   "keywords": [
     "release",
@@ -50,17 +50,15 @@
   "release-it": {
     "hooks": {
       "before:init": "npm test",
-      "after:bump": "auto-changelog --ignore-commit-pattern \"Release \" --sort-commits date --latest-version v${version}"
+      "after:bump": "auto-changelog --latest-version ${version}"
     },
     "git": {
-      "changelog": "auto-changelog --ignore-commit-pattern \"Release \" --sort-commits date --stdout --template ./changelog-template-for-release.hbs",
-      "commitMessage": "Release ${version}",
-      "tagName": "${version}",
+      "changelog": "auto-changelog --stdout --template ./changelog-template-for-release.hbs",
       "tagArgs": "-s"
     },
     "github": {
       "release": true,
-      "releaseName": "v${version}",
+      "releaseName": "${version}",
       "tokenRef": "GITHUB_TOKEN_CLI_RELEASER"
     },
     "npm": {
@@ -72,7 +70,7 @@
     "template": "keepachangelog",
     "commitLimit": false,
     "unreleased": true,
-    "ignore-commit-pattern": "Release ",
-    "sort-commits": "date"
+    "ignoreCommitPattern": "(Release (v)?|Merge (remote-tracking )?branch)",
+    "sortCommits": "date"
   }
 }
