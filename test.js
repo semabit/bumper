@@ -82,14 +82,14 @@ test('should write XML file', async t => {
     const options = {[namespace]: {out: {file: './manifest.xml', type: 'application/xml', path: 'main.$.version'}}};
     const plugin = factory(Plugin, {namespace, options});
     await plugin.bump('6.7.8');
-    t.is(readFile('./manifest.xml'), `<?xml version="1.0" encoding="utf-8"?>${EOL}<main version="6.7.8"/>`);
+    t.is(readFile('./manifest.xml'), `<?xml version="1.0" encoding="utf-8" ?>${EOL}<main version="6.7.8" />`);
 });
 
 test('should write indented XML file', async t => {
     const options = {[namespace]: {out: {file: './widget.xml', type: 'application/xml', path: 'widget.$.version'}}};
     const plugin = factory(Plugin, {namespace, options});
     await plugin.bump('5.9.6');
-    t.is(readFile('./widget.xml'), `<?xml version="1.0" encoding="utf-8"?>${EOL}<widget version="5.9.6" xmlns="http://www.w3.org/ns/widgets"/>`);
+    t.is(readFile('./widget.xml'), `<?xml version="1.0" encoding="utf-8" ?>${EOL}<widget version="5.9.6" xmlns="http://www.w3.org/ns/widgets" />`);
 });
 
 test('should write new, indented JSON file', async t => {
@@ -103,7 +103,7 @@ test('should write new, indented XML file', async t => {
     const options = {[namespace]: {out: [{file: './null.xml', type: 'application/xml', path: 'version'}]}};
     const plugin = factory(Plugin, {namespace, options});
     await plugin.bump('0.0.0');
-    t.is(readFile('./null.xml'), `<?xml version="1.0" encoding="utf-8"?>${EOL}<version>0.0.0</version>`);
+    t.is(readFile('./null.xml'), `<?xml version="1.0" encoding="utf-8" ?>${EOL}<version>0.0.0</version>`);
 });
 
 test('should write new YAML file', async t => {

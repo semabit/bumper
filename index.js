@@ -76,7 +76,7 @@ class Bumper extends Plugin {
 
                     set(parsed, path, version);
                     const builder = new xml2js.Builder({
-                        renderOpts: {pretty: true, indent, newline: '\n'},
+                        renderOpts: {pretty: true, indent, newline: '\n', spacebeforeslash: ' '},
                         xmldec: {version: '1.0', encoding: 'utf-8'}
                     });
 
