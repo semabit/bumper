@@ -1,4 +1,5 @@
 const fs = require('fs');
+const os = require('os');
 const util = require('util');
 const get = require('lodash.get');
 const set = require('lodash.set');
@@ -86,7 +87,7 @@ class Bumper extends Plugin {
                         xml = builder.buildObject(parsed);
                     }
 
-                    return await writeFile(file, xml);
+                    return await writeFile(file, xml + os.EOL);
                 }
             })
         );
