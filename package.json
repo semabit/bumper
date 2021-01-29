@@ -32,14 +32,17 @@
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "mock-fs": "^4.10.0",
-    "release-it": "^12.2.2",
     "xml2js": "^0.4.22",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "auto-changelog": "^1.16.1",
     "ava": "^2.0.0",
+    "release-it": "^14.2.0",
     "sinon": "^7.3.2"
+  },
+  "peerDpendencies": {
+    "release-it": "^14.2.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
