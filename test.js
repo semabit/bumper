@@ -65,14 +65,14 @@ test('should write indented JSON file', async t => {
 });
 
 test('should write indented YAML file', async t => {
-    const options = {[namespace]: {out: {file: './manifest.yml', type: 'application/x-yaml', path: "content.v"}}};
+    const options = {[namespace]: {out: {file: './manifest.yml', type: 'application/x-yaml', path: 'content.v'}}};
     const plugin = factory(Plugin, {namespace, options});
     await plugin.bump('2.4.5');
     t.is(readFile('./manifest.yml'), `content:${EOL}  v: 2.4.5`);
 });
 
 test('should write indented YAML file (10 indent)', async t => {
-    const options = {[namespace]: {out: {file: './indent.yml', type: 'application/x-yaml', path: "content.v"}}};
+    const options = {[namespace]: {out: {file: './indent.yml', type: 'application/x-yaml', path: 'content.v'}}};
     const plugin = factory(Plugin, {namespace, options});
     await plugin.bump('3.3.4');
     t.is(readFile('./indent.yml'), `content:${EOL}          v: 3.3.4`);
