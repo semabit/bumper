@@ -15,15 +15,16 @@ const writeFile = util.promisify(fs.writeFile);
 const parseFileOption = option => {
     const file = typeof option === 'string' ? option : option.file;
     const type = (typeof option !== 'string' && option.type) || 'application/json';
-    const path = (typeof option !== 'string' && option.path) || 'version';
-    return {file, type, path};
+    const paths = (typeof option !== 'string' && (option.path ? [option.path] : (option.paths && option.paths.length) ? option.paths : undefined)) || ['version'];
+    return {file, type, paths};
 };
 
 class Bumper extends Plugin {
     async getLatestVersion() {
         const {in: _in} = this.options;
         if (!_in) return;
-        const {file, type, path} = parseFileOption(_in);
+        const {file, type, paths} = parseFileOption(_in);
+        const path = paths[0];
         let version = null;
         if (file) {
             const data = await readFile(file);
@@ -49,12 +50,12 @@ class Bumper extends Plugin {
         if (!out) return;
         return Promise.all(
             castArray(out).map(async out => {
-                const {file, type, path} = parseFileOption(out);
+                const {file, type, paths} = parseFileOption(out);
                 if (type === 'application/json') {
                     const data = await readFile(file, 'utf8').catch(() => '{}') || '{}';
                     const indent = detectIndent(data).indent || '  ';
                     const parsed = JSON.parse(data);
-                    set(parsed, path, version);
+                    paths.forEach((path) => set(parsed, path, version))
                     return writeFile(file, JSON.stringify(parsed, null, indent) + '\n');
                 } else if (type === 'text/plain') {
                     return writeFile(file, version);
@@ -62,7 +63,7 @@ class Bumper extends Plugin {
                     const data = await readFile(file, 'utf8').catch(() => '{}') || '{}';
                     const indent = detectIndent(data).amount || 2;
                     const parsed = YAML.parse(data);
-                    set(parsed, path, version);
+                    paths.forEach((path) => set(parsed, path, version))
                     return writeFile(file, YAML.stringify(parsed, null, indent));
                 } else if (type === 'application/xml') {
                     const data = await readFile(file, 'utf8').catch(() => '') || '';
@@ -75,10 +76,10 @@ class Bumper extends Plugin {
                         parsed = await xml2js.parseStringPromise(data);
                     }
 
-                    set(parsed, path, version);
+                    paths.forEach((path) => set(parsed, path, version))
                     const builder = new xml2js.Builder({
                         renderOpts: {pretty: true, indent, newline: '\n', spacebeforeslash: ' '},
-                        xmldec: {version: '1.0', encoding: 'utf-8'}
+                        xmldec: {version: '1.0', encoding: 'utf-8'},
                     });
 
                     try {

@@ -14,6 +14,7 @@ mock({
     './manifest.json': '{}',
     './manifest.xml': '',
     './indent.yml': YAML.stringify({content: {'v': '3.3.3'}}, null, 10),
+    './multi-versions.json': JSON.stringify({release: '0.0.1', 'pre-release': '1.0.0-0'}),
 });
 
 const namespace = 'bumper';
@@ -34,6 +35,20 @@ test('should return latest version from JSON file', async t => {
     const plugin = factory(Plugin, {namespace, options});
     const version = await plugin.getLatestVersion();
     t.is(version, '1.0.0');
+});
+
+test('should return latest version of path "pre-release" from JSON file', async t => {
+    const options = {[namespace]: {in: {file: './multi-versions.json', paths: ['pre-release']}}};
+    const plugin = factory(Plugin, {namespace, options});
+    const version = await plugin.getLatestVersion();
+    t.is(version, '1.0.0-0');
+});
+
+test('should return latest version of path "release" from JSON file', async t => {
+    const options = {[namespace]: {in: {file: './multi-versions.json', paths: ['release']}}};
+    const plugin = factory(Plugin, {namespace, options});
+    const version = await plugin.getLatestVersion();
+    t.is(version, '0.0.1');
 });
 
 test('should return latest version from plain text file', async t => {
@@ -125,4 +140,25 @@ test('should write plain text file', async t => {
     const plugin = factory(Plugin, {namespace, options});
     await plugin.bump('3.2.1');
     t.is(readFile('./VERSION'), '3.2.1');
+});
+
+test('should write version to all paths', async t => {
+    const options = {[namespace]: {out: {file: './multi-versions.json', paths: ['release', 'pre-release']}}};
+    const plugin = factory(Plugin, {namespace, options});
+    await plugin.bump('1.1.1');
+    t.is(readFile('./multi-versions.json'), JSON.stringify({release: '1.1.1', 'pre-release': '1.1.1'}, null, '  '));
+});
+
+test('should write version to all paths deep', async t => {
+    const options = {[namespace]: {out: {file: './deep.multi.json', paths: ['version1.release', 'version2.pre-release']}}};
+    const plugin = factory(Plugin, {namespace, options});
+    await plugin.bump('1.2.3');
+    t.is(readFile('./deep.multi.json'), JSON.stringify({version1: {release: '1.2.3'}, version2: {'pre-release': '1.2.3'}}, null, '  '));
+});
+
+test('should write indented XML file with all paths', async t => {
+    const options = {[namespace]: {out: [{file: './multi-versions.xml', type: 'application/xml', paths: ['data.release', 'data.pre-release']}]}};
+    const plugin = factory(Plugin, {namespace, options});
+    await plugin.bump('0.2.3');
+    t.is(readFile('./multi-versions.xml'), `<?xml version="1.0" encoding="utf-8" ?>${EOL}<data>${EOL}  <release>0.2.3</release>${EOL}  <pre-release>0.2.3</pre-release>${EOL}</data>`);
 });
